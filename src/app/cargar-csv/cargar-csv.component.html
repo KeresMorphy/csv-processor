@@ -1,0 +1,107 @@
+<div class="container">
+  <h2>Cargar Archivo CSV</h2>
+  <input type="file" (change)="onFileUpload($event)" accept=".csv" />
+
+  <!-- Filtro de tipos de eventos -->
+  <div>
+    <label for="eventType">Filtrar por tipo de evento:</label>
+    <select id="eventType" [(ngModel)]="selectedEventType" (change)="filterData()">
+      <option value="">Todos</option>
+      <option *ngFor="let event of eventTypes" [value]="event">{{ event }}</option>
+    </select>
+  </div>
+
+  <!-- Filtro por sucursal -->
+  <div>
+    <label for="deviceName">Filtrar por sucursal (Dispositivo):</label>
+    <select id="deviceName" [(ngModel)]="selectedDeviceName" (change)="filterData()">
+      <option value="">Todas las sucursales</option>
+      <option *ngFor="let deviceName of deviceNames" [value]="deviceName">{{ deviceName }}</option>
+    </select>
+  </div>
+
+  <!-- Tabla con el total de eventos -->
+  <div class="summary-table">
+    <h3>Total de Eventos</h3>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Tipo de Evento</th>
+          <th>Cantidad</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Video File Loss Alarm</td>
+          <td>{{ lostVideoEvents }}</td>
+        </tr>
+        <tr>
+          <td>Motion Detection Alarm</td>
+          <td>{{ motionDetectionEvents }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Tabla de eventos por Sucursal (Nombre del Dispositivo) -->
+  <div class="branch-events-table">
+    <h3>Eventos por Sucursal</h3>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Sucursal (Dispositivo)</th>
+          <th>Cantidad de Eventos</th>
+          <th>Eventos</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let branch of filteredBranchEvents | keyvalue">
+          <td>{{ branch.key }}</td>
+          <td>{{ branch.value.count }}</td> <!-- Total de eventos -->
+          <td>
+            <ul>
+              <li *ngFor="let event of branch.value.events">{{ event }}</li>
+            </ul>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Tabla con los datos del CSV -->
+  <table *ngIf="csvData.length > 0" class="table table-striped">
+    <thead>
+      <tr>
+        <th>Índice</th>
+        <th>Nombre del Dispositivo</th>
+        <th>Tipo de Evento</th>
+        <th>Hora del Evento</th>
+        <th>Tipo de Dispositivo</th>
+        <th>Nombre del Grupo</th>
+        <th>Nombre del Objeto</th>
+        <th>Tipo de Objeto</th>
+        <th>Prioridad</th>
+        <th>Detalles del Evento</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngIf="csvData.length === 0">
+        <td colspan="11" class="text-center">No hay datos disponibles</td>
+      </tr>
+      <tr *ngFor="let row of filteredData; let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>{{ row['Device Name'] }}</td>
+        <td>{{ row['Event Type'] }}</td>
+        <td>{{ row['Event Time'] }}</td>
+        <td>{{ row['Device Type'] }}</td>
+        <td>{{ row['Group Name'] }}</td>
+        <td>{{ row['Object Name'] }}</td>
+        <td>{{ row['Object Type'] }}</td>
+        <td>{{ row['Priority'] }}</td>
+        <td>{{ row['Event Details'] }}</td>
+        <td>{{ row['Status'] }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
