@@ -17,7 +17,7 @@ export class CargarCsvComponent implements OnInit {
   filteredData: any[] = []; // Datos filtrados para la tabla
   filteredBranchEvents: { [key: string]: { count: number, events: string[] } } = {}; // Eventos filtrados por sucursal
   headers: string[] = []; // Encabezados del CSV
-  eventTypes: string[] = ['Motion Detection Alarm', 'Video File Loss Alarm']; // Tipos de eventos disponibles
+  eventTypes: string[] = ['Perdida de video', 'Deteccion movimiento', 'Cruce linea', 'Fuera de linea']; // Tipos de eventos disponibles
   selectedEventType: string = ''; // Tipo de evento seleccionado
   selectedDeviceName: string = ''; // Sucursal (Dispositivo) seleccionado
   deviceNames: string[] = []; // Lista de nombres de dispositivos (sucursales)
@@ -25,6 +25,8 @@ export class CargarCsvComponent implements OnInit {
   // Contadores para los tipos de evento
   lostVideoEvents: number = 0;
   motionDetectionEvents: number = 0;
+  lineCrossingEvents: number = 0;
+  offlineEvents: number = 0;
 
   // Mapa de eventos por sucursal (dispositivo)
   branchEvents: { [key: string]: { count: number, events: string[] } } = {};
@@ -105,6 +107,8 @@ export class CargarCsvComponent implements OnInit {
   calculateEventCounts(): void {
     this.lostVideoEvents = 0;
     this.motionDetectionEvents = 0;
+    this.lineCrossingEvents = 0;
+    this.offlineEvents = 0;
     this.branchEvents = {}; // Reseteamos el mapa de sucursales
 
     this.csvData.forEach((row) => {
@@ -124,11 +128,15 @@ export class CargarCsvComponent implements OnInit {
       // Incrementar el contador de eventos para la sucursal
       this.branchEvents[deviceName].count++;
 
-      // Contar los eventos por tipo solo una vez
-      if (eventType === 'Video File Loss Alarm') {
+      // Contar los eventos por tipo
+      if (eventType === 'Perdida de video') {
         this.lostVideoEvents++;
-      } else if (eventType === 'Motion Detection Alarm') {
+      } else if (eventType === 'Deteccion movimiento') {
         this.motionDetectionEvents++;
+      } else if (eventType === 'Cruce linea') {
+        this.lineCrossingEvents++;
+      } else if (eventType === 'Fuera de linea') {
+        this.offlineEvents++;
       }
     });
   }
